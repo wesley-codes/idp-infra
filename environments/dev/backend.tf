@@ -6,7 +6,7 @@
 
 terraform {
   backend "s3" {
-    bucket         = "idp-infra-tfstate-meka-us-east-1"  # same bucket as bootstrap
+    bucket         = "idp-infra-tfstate-meka-us-east-1" # same bucket as bootstrap
     key            = "dev/terraform.tfstate"            # path in the bucket for THIS env
     region         = "us-east-1"                        # your region
     dynamodb_table = "idp-infra-tf-locks"               # same lock table
