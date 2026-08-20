@@ -1,0 +1,23 @@
+# An ArgoCD "Application" = the declarative version of the app you created in the UI.
+# It tells ArgoCD: deploy whatever is at gitops/web in this repo, into the cluster,
+# and keep it in sync automatically.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: web
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/wesley-codes/idp-infra.git
+    targetRevision: main        # the git branch to watch
+    path: gitops/web            # the folder in the repo to deploy
+  destination:
+    server: https://kubernetes.default.svc   # this same cluster
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true               # delete things removed from Git
+      selfHeal: true            # undo manual changes (the demo you saw)
+    syncOptions:
+      - CreateNamespace=true
