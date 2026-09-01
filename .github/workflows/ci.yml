@@ -18,7 +18,11 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
-    
+
+      - name: Debug repo identity
+        run: |
+          echo "repo = $GITHUB_REPOSITORY"
+          echo "ref  = $GITHUB_REF"
       - name: Login in to AWS via OIDC 
         uses: aws-actions/configure-aws-credentials@v4
         with:
