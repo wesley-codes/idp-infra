@@ -1,0 +1,41 @@
+name: CI
+on: 
+ push: 
+    branches: [main]
+
+permissions:
+    id-token: write
+    contents: read 
+
+env: 
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: idp-dev/web
+  ROLE_ARN: arn:aws:iam::600406561872:role/idp-github-actions
+
+jobs:
+  build-and-push: 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+    
+      - name: Login in to AWS via OIDC 
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            role-to-assume: ${{env.ROLE_ARN}}
+            aws-region: ${{env.AWS_REGION}}
+
+      - name: Login in Amazon ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+
+      - name: Build and Push the image
+        env: 
+          REGISTRY: ${{steps.ecr.outputs.registry}}
+        run: |
+         IMAGE="$REGISTRY/$ECR_REPOSITORY:${{ github.sha }}"
+         docker build -t "$IMAGE" ./app
+         docker push "$IMAGE"
+         echo "Pushed $IMAGE"
+    
