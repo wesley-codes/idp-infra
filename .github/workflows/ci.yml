@@ -19,10 +19,11 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Debug repo identity
+      - name: Debug OIDC claims
         run: |
           echo "repo = $GITHUB_REPOSITORY"
-          echo "ref  = $GITHUB_REF"
+          TOKEN=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | jq -r .value)
+          python3 -c "import sys,base64,json;p=sys.argv[1].split('.')[1];p+='='*(-len(p)%4);c=json.loads(base64.urlsafe_b64decode(p));print('SUB:',repr(c['sub']));print('AUD:',repr(c['aud']))" "$TOKEN"
       - name: Login in to AWS via OIDC 
         uses: aws-actions/configure-aws-credentials@v4
         with:
