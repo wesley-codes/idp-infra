@@ -22,7 +22,7 @@ resource "aws_iam_role" "github_actions" {
       Action = "sts:AssumeRoleWithWebIdentity"
       Condition = {
         StringEquals = { "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com" }
-        StringLike   = { "token.actions.githubusercontent.com:sub" = "repo:wesley-codes/idp-infra@*:*" }
+        StringLike   = { "token.actions.githubusercontent.com:sub" = "repo:wesley-codes/idp-infra:*" }
 
       }
     }]
@@ -45,7 +45,7 @@ resource "aws_iam_role_policy" "github_actions_ecr" {
           "ecr:BatchCheckLayerAvailability", "ecr:InitiateLayerUpload", "ecr:UploadLayerPart",
           "ecr:CompleteLayerUpload", "ecr:PutImage", "ecr:BatchGetImage", "ecr:GetDownloadUrlForLayer"
         ]
-        Resource = "arn:aws:ecr:us-east-1:${data.aws_caller_identity.current.account_id}:repository/idp-*"
+        Resource = "arn:aws:ecr:us-east-1:${data.aws_caller_identity.current.account_id}:repository/idp-infra:*"
 
       }
 
