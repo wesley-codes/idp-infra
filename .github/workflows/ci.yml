@@ -42,13 +42,7 @@ jobs:
         run: docker build -t "$IMAGE" ./app
 
       - name: Trivy image scan
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: ${{ env.IMAGE }}
-          format: table
-          severity: HIGH,CRITICAL
-          ignore-unfixed: true 
-          exit-code: "0"
+        run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 0 "$IMAGE"
 
       - name: Push the image
         run: docker push "$IMAGE"
