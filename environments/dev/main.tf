@@ -14,7 +14,3 @@ module "eks" {
   private_subnet_ids = concat(module.vpc.private_subnet_ids)
 }
 
-module "ecr" {
-  source = "../../modules/ecr"
-  name   = "idp-dev/web"
-}
