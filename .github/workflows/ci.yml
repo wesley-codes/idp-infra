@@ -19,6 +19,11 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
+      - name: Semgrep SAST scan
+        run: |
+            pip install semgrep
+            semgrep scan --config "p/default" app/
+
       - name: Login in to AWS via OIDC 
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -30,12 +35,20 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
 
-      - name: Build and Push the image
-        env: 
-          REGISTRY: ${{steps.ecr.outputs.registry}}
-        run: |
-         IMAGE="$REGISTRY/$ECR_REPOSITORY:${{ github.sha }}"
-         docker build -t "$IMAGE" ./app
-         docker push "$IMAGE"
-         echo "Pushed $IMAGE"
+      - name: Compute image name
+        run: echo "IMAGE=${{steps.ecr.outputs.registry}}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}" >> "$GITHUB_ENV"
     
+      - name: Build the image 
+        run: docker build -t "$IMAGE" ./app
+
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE }}
+          format: table
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true 
+          exit-code: "0"
+
+      - name: Push the image
+        run: docker push "$IMAGE"
