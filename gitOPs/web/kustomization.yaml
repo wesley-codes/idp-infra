@@ -8,3 +8,7 @@ labels:
       app.kubernetes.io/part-of: idp-platform
       team: platform
     includeSelectors: true
+images:
+  - name: web
+    newName: 600406561872.dkr.ecr.us-east-1.amazonaws.com/idp-dev/web
+    newTag: latest
