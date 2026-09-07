@@ -50,11 +50,11 @@ jobs:
       - name: Push the image
         run: docker push "$IMAGE"
 
-      - name: update image tag & commit 
+      - name: update image tag & commits
         run: |
           sed -i "s|newTag:.*|newTag: ${{github.sha}} |" gitops/web/kustomization.yaml
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add gitops/web/kustomization.yaml
+          git add gitOps/web/kustomization.yaml
           git commit -m "Deploy ${{ github.sha }}"
           git push 
