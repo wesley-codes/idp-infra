@@ -50,7 +50,6 @@ jobs:
       - name: Push the image
         run: docker push "$IMAGE"
 
-# fixed
       - name: Update image tag & commit (GitOps handoff)
         run: |
           sed -i "s|newTag:.*|newTag: ${{ github.sha }}|" gitops/web/kustomization.yaml
