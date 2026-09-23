@@ -12,6 +12,6 @@ labels:
 images:
   - name: web
     newName: 600406561872.dkr.ecr.us-east-1.amazonaws.com/idp-dev/web
-    newTag: b0380e806b95a0eaaf58a1aa757bc543282fc1fe
+    newTag: f0c19d94244e76c71379fe3dab96c5e646c04dfe
 
 # fix
