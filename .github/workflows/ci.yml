@@ -58,3 +58,4 @@ jobs:
           git add gitops/web/kustomization.yaml
           git commit -m "Deploy ${{ github.sha }}"
           git push 
+# 
