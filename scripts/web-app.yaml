@@ -10,14 +10,14 @@ spec:
   project: default
   source:
     repoURL: https://github.com/wesley-codes/idp-infra.git
-    targetRevision: main        # the git branch to watch
-    path: gitops/web            # the folder in the repo to deploy
+    targetRevision: main        
+    path: gitops/web            
   destination:
-    server: https://kubernetes.default.svc   # this same cluster
+    server: https://kubernetes.default.svc   
     namespace: default
   syncPolicy:
     automated:
-      prune: true               # delete things removed from Git
-      selfHeal: true            # undo manual changes (the demo you saw)
+      prune: true              
+      selfHeal: true            
     syncOptions:
       - CreateNamespace=true
