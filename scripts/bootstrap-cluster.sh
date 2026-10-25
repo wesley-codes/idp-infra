@@ -50,8 +50,8 @@ kubectl -n argocd create secret generic idp-infra-repo \
 kubectl -n argocd label secret idp-infra-repo \
   argocd.argoproj.io/secret-type=repository --overwrite
 
-echo "==> 5/5  Create the web Application (ArgoCD then syncs it from Git)"
-kubectl apply -f "$SCRIPT_DIR/web-app.yaml"
+echo "==> 5/5  Create the root Application (it creates web + monitoring from Git)"
+kubectl apply -f "$SCRIPT_DIR/../gitops/bootstrap/root-app.yaml"
 
 echo
 echo "Done. ArgoCD is restoring your apps from Git."
@@ -60,3 +60,5 @@ echo "Open the UI:"
 echo "  kubectl port-forward svc/argocd-server -n argocd 8080:443"
 echo "Admin password:"
 echo "  kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d; echo"
+echco "Apply argo-cd root.yaml"
+kubectl apply -f ""

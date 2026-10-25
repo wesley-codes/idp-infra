@@ -1,22 +1,23 @@
 name: CI
-on: 
- push: 
+on:
+  push:
     branches: [main]
     paths:
-    - "app/**"
-    - ".github/workflows/**"
+      - "app/**"
+      - ".github/workflows/**"
 
+  workflow_dispatch:
 permissions:
-    id-token: write
-    contents: write 
+  id-token: write
+  contents: write
 
-env: 
+env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: idp-dev/web
   ROLE_ARN: arn:aws:iam::600406561872:role/idp-github-actions
 
 jobs:
-  build-and-push: 
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -24,24 +25,23 @@ jobs:
 
       - name: Semgrep SAST scan
         run: |
-            pip install semgrep
-            semgrep scan --config "p/default" app/
+          pip install semgrep
+          semgrep scan --config "p/default" app/
 
-      - name: Login in to AWS via OIDC 
+      - name: Login in to AWS via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-            role-to-assume: ${{env.ROLE_ARN}}
-            aws-region: ${{env.AWS_REGION}}
+          role-to-assume: ${{env.ROLE_ARN}}
+          aws-region: ${{env.AWS_REGION}}
 
       - name: Login in Amazon ECR
         id: ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-
       - name: Compute image name
         run: echo "IMAGE=${{steps.ecr.outputs.registry}}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}" >> "$GITHUB_ENV"
-    
-      - name: Build the image 
+
+      - name: Build the image
         run: docker build -t "$IMAGE" ./app
 
       - name: Trivy image scan
@@ -57,5 +57,6 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add gitops/web/kustomization.yaml
           git commit -m "Deploy ${{ github.sha }}"
-          git push 
+          git push
+
 # ##
