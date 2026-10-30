@@ -25,20 +25,20 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # present as an environment variable when you run the script.
 : "${GITHUB_TOKEN:?ERROR: set GITHUB_TOKEN to your read-only GitHub token first (export GITHUB_TOKEN=...)}"
 
-echo "==> 1/6  Point kubectl at the (new) cluster"
+echo "==> 1/7  Point kubectl at the (new) cluster"
 aws eks update-kubeconfig --name "$CLUSTER_NAME" --region "$REGION"
 
-echo "==> 2/6  Install or upgrade ArgoCD via Helm"
+echo "==> 2/7  Install or upgrade ArgoCD via Helm"
 helm repo add argo https://argoproj.github.io/argo-helm >/dev/null 2>&1 || true
 helm repo update >/dev/null
 helm upgrade --install argocd argo/argo-cd \
   --namespace argocd --create-namespace \
   --wait --timeout 10m
 
-echo "==> 3/6  Wait for the ArgoCD server to be ready"
+echo "==> 3/7  Wait for the ArgoCD server to be ready"
 kubectl -n argocd rollout status deploy/argocd-server --timeout=300s
 
-echo "==> 4/6  Connect the private repo (read-only token)"
+echo "==> 4/7  Connect the private repo (read-only token)"
 # Build the repository secret and apply it. The special label is what makes
 # ArgoCD treat this secret as a repo credential.
 kubectl -n argocd create secret generic idp-infra-repo \
@@ -50,7 +50,7 @@ kubectl -n argocd create secret generic idp-infra-repo \
 kubectl -n argocd label secret idp-infra-repo \
   argocd.argoproj.io/secret-type=repository --overwrite
 
-echo "==> 5/6  Create the root Application (it creates web + monitoring from Git)"
+echo "==> 5/7  Create the root Application (it creates web + monitoring from Git)"
 kubectl apply -f "$SCRIPT_DIR/../gitops/bootstrap/root-app.yaml"
 
 echo
@@ -65,8 +65,14 @@ echo "Open Grafana UI"
 echo "  kubectl port-forward svc/grafana -n monitoring 3000:3000"
 
 
-echo "==> 6/6  Install Loki for logging"
+echo "==> 6/7  Install Loki for logging"
 helm repo add grafana-community https://grafana-community.github.io/helm-charts
 helm repo update
 echo "Show Loki chart version"
 helm search repo grafana-community/loki
+
+# Grafana Alloy Is a single agent that collects, processes and ships telemetry: metrics, logs, traces and profiles
+echo "===> 7/7 Adding Grafana Alloy" 
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+helm search repo grafana/alloy
