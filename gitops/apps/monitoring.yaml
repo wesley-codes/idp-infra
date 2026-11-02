@@ -16,6 +16,11 @@ spec:
             retention: 6h
         grafana:
           adminPassword: admin
+          additionalDataSources:
+            - name: loki
+              type: loki
+              url: http://loki.monitoring.svc.cluster.local:3100
+              access: proxy
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

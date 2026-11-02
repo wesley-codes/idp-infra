@@ -62,7 +62,7 @@ echo "Admin password:"
 echo "  kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d; echo"
 echo "Apply argo-cd root.yaml"
 echo "Open Grafana UI"
-echo "  kubectl port-forward svc/grafana -n monitoring 3000:3000"
+echo "kubectl port-forward svc/kube-prometheus-stack-grafana -n monitoring 3000:80"
 
 
 echo "==> 6/7  Install Loki for logging"
