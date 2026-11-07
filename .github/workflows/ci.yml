@@ -3,8 +3,8 @@ on:
   push:
     branches: [main]
     paths:
-      - "app/**"
-      - ".github/workflows/**"
+      - app/**
+      - .github/workflows/**
 
   workflow_dispatch:
 permissions:
