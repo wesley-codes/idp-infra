@@ -4,20 +4,18 @@ metadata:
   name: kyverno
   namespace: argocd
 spec: 
-  projectt: default
+  project: default
   source:
     repoURL: https://kyverno.github.io/kyverno/
     chart: kyverno
-    targetRevison: 3.9.2
-    helm: 
-      values: |
-destination:
-  server: https://kubernetes.default.svc
-  namespace: kyverno
-syncPolicy:
-  automated:
-    prune: true
-    selfHeal: true
-  syncOptions:
-    - CreateNamespace=true
-    - ServerSideApply=true
+    targetRevision: 3.9.2
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kyverno
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
