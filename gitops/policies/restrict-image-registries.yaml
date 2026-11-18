@@ -1,0 +1,28 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+   name: restrict-image-registries
+spec:
+  validationFailureAction: Audit
+  background: true
+  rules: 
+    - name: only-our-ecr
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - kyverno
+                - monitoring
+                - argocd
+      validate:
+        message: "Images may only be pulled from our ECR registry"
+        pattern:
+          spec:
+            containers:
+              - image: "600406561872.dkr.ecr.us-east-1.amazonaws.com/*"
